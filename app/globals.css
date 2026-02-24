@@ -146,11 +146,12 @@ body::before {
 .nav-right { display: flex; align-items: center; gap: 12px; }
 
 /* Mobile nav full-screen (v2) */
-.mobile-nav { display: none; position: fixed; inset: 0; z-index: 999; background: rgba(11,17,32,0.98); backdrop-filter: blur(20px); flex-direction: column; align-items: center; justify-content: center; gap: 32px; }
+.mobile-nav { display: none; position: fixed; inset: 0; z-index: 1001; background: rgba(11,17,32,0.98); backdrop-filter: blur(20px); flex-direction: column; align-items: center; justify-content: center; gap: 32px; }
 .mobile-nav.open { display: flex; }
 .mobile-nav a { font-family: var(--serif); font-size: 32px; font-weight: 300; color: var(--white); text-decoration: none; transition: color var(--tr); }
 .mobile-nav a:hover { color: var(--gold); }
-.mobile-nav-close { position: absolute; top: 24px; right: 24px; background: none; border: none; cursor: pointer; color: var(--muted); font-size: 28px; line-height: 1; padding: 8px; }
+.mobile-nav-close { position: absolute; top: 24px; right: 24px; z-index: 1; background: none; border: none; cursor: pointer; color: var(--white); font-size: 32px; line-height: 1; padding: 12px; -webkit-tap-highlight-color: transparent; }
+.mobile-nav-close:hover { color: var(--gold); }
 
 /* Language visibility (v2) */
 [data-lang]{ display: none; }
@@ -161,11 +162,11 @@ span[data-lang]{ display: none; }
 
 /* Carousel (v2) */
 .carousel-wrap { display: none; position: relative; }
-.carousel-track-outer { overflow: hidden; }
-.carousel-track { display: flex; gap: 16px; transition: transform 0.4s cubic-bezier(0.4,0,0.2,1); will-change: transform; }
+.carousel-track-outer { overflow: hidden; touch-action: pan-y pinch-zoom; }
+.carousel-track { display: flex; gap: 0; transition: transform 0.4s cubic-bezier(0.4,0,0.2,1); will-change: transform; }
 .carousel-track .service-card,
 .carousel-track .pricing-card,
-.carousel-track .testimonial-card { flex: 0 0 calc(100% - 40px); min-width: 0; }
+.carousel-track .testimonial-card { flex: 0 0 100%; width: 100%; min-width: 0; box-sizing: border-box; }
 .carousel-dots { display: flex; justify-content: center; gap: 8px; margin-top: 24px; }
 .carousel-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.2); border: none; cursor: pointer; padding: 0; transition: all var(--tr); }
 .carousel-dot.active { background: var(--gold); width: 20px; border-radius: 3px; }
@@ -579,7 +580,7 @@ button:focus-visible {
   margin: 0 auto;
   line-height: 1.7;
 }
-.services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: stretch; }
 .service-card {
   background: var(--navy-soft);
   border: 1px solid rgba(255,255,255,0.06);
@@ -587,6 +588,8 @@ button:focus-visible {
   padding: 40px 36px;
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
   transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
   cursor: default;
 }
@@ -613,7 +616,7 @@ button:focus-visible {
 }
 .service-icon svg { width: 22px; height: 22px; stroke: var(--gold); fill: none; stroke-width: 1.5; }
 .service-title { font-size: 18px; font-weight: 600; color: var(--white); margin-bottom: 12px; letter-spacing: -0.01em; }
-.service-desc { font-size: 13.5px; color: var(--muted); line-height: 1.75; font-weight: 300; margin-bottom: 24px; }
+.service-desc { font-size: 13.5px; color: var(--muted); line-height: 1.75; font-weight: 300; margin-bottom: 24px; flex: 1; min-height: 0; }
 .service-features { list-style: none; display: flex; flex-direction: column; gap: 8px; }
 .service-features li {
   font-size: 12.5px;
@@ -631,12 +634,14 @@ button:focus-visible {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
-  align-items: start;
+  align-items: stretch;
 }
 .pricing-card {
   border-radius: 16px;
   padding: 48px 40px;
   position: relative;
+  display: flex;
+  flex-direction: column;
   transition: transform var(--transition), box-shadow var(--transition);
   border: 1px solid rgba(255,255,255,0.07);
   background: var(--navy-soft);
@@ -669,7 +674,7 @@ button:focus-visible {
 .pricing-amount { font-family: var(--serif); font-size: 52px; font-weight: 300; color: var(--white); line-height: 1; }
 .pricing-amount span { font-family: var(--sans); font-size: 20px; color: var(--gold); vertical-align: super; margin-right: 2px; }
 .pricing-period { font-size: 12px; color: var(--muted); margin-top: 6px; letter-spacing: 0.04em; }
-.pricing-features { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 36px; }
+.pricing-features { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 36px; flex: 1; min-height: 0; }
 .pricing-features li {
   font-size: 13.5px;
   color: var(--offwhite);
@@ -820,13 +825,15 @@ button:focus-visible {
 
 /* Testimonials */
 #testimonials { padding: 120px 0; background: var(--navy-mid); overflow: hidden; position: relative; }
-.testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: stretch; }
 .testimonial-card {
   background: var(--navy-soft);
   border: 1px solid rgba(255,255,255,0.06);
   border-radius: 12px;
   padding: 36px 32px;
   position: relative;
+  display: flex;
+  flex-direction: column;
   transition: transform var(--transition), border-color var(--transition);
 }
 .testimonial-card:hover {
@@ -849,6 +856,8 @@ button:focus-visible {
   margin-bottom: 28px;
   font-style: italic;
   font-family: var(--serif);
+  flex: 1;
+  min-height: 0;
 }
 .testimonial-author { display: flex; align-items: center; gap: 14px; }
 .author-avatar {

@@ -11,6 +11,12 @@ export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [carousel, setCarousel] = useState({ services: 0, pricing: 0, testimonials: 0 });
   const trackRefs = useRef<{ services: HTMLDivElement | null; pricing: HTMLDivElement | null; testimonials: HTMLDivElement | null }>({ services: null, pricing: null, testimonials: null });
+  const touchStartX = useRef(0);
+  const handleCarouselSwipe = (name: 'services' | 'pricing' | 'testimonials', e: React.TouchEvent) => {
+    const x = e.changedTouches[0].clientX;
+    const dx = x - touchStartX.current;
+    if (Math.abs(dx) > 50) goCarousel(name, dx > 0 ? -1 : 1);
+  };
 
   useEffect(() => {
     try {
@@ -65,7 +71,7 @@ export default function Home() {
       const track = trackRefs.current[name as keyof typeof trackRefs.current];
       if (!track?.parentElement) return;
       const outer = track.parentElement;
-      const itemWidth = outer.offsetWidth + 16;
+      const itemWidth = outer.offsetWidth;
       const idx = carousel[name as keyof typeof carousel];
       track.style.transform = `translateX(-${idx * itemWidth}px)`;
     });
@@ -133,7 +139,7 @@ export default function Home() {
               <span data-lang="bs">Zakažite poziv</span><span data-lang="en">Book a Call</span>
             </a>
           </div>
-          <button type="button" className="nav-hamburger" onClick={() => setMobileMenuOpen(true)} aria-label="Open menu">
+          <button type="button" className={`nav-hamburger ${mobileMenuOpen ? 'active' : ''}`} onClick={() => setMobileMenuOpen((prev) => !prev)} aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'} aria-expanded={mobileMenuOpen}>
             <span /><span /><span />
           </button>
         </div>
@@ -309,7 +315,7 @@ export default function Home() {
             ))}
           </div>
           <div className="carousel-wrap" id="servicesCarousel">
-            <div className="carousel-track-outer">
+            <div className="carousel-track-outer" onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }} onTouchEnd={(e) => handleCarouselSwipe('services', e)}>
               <div className="carousel-track" id="servicesTrack" ref={(el) => { trackRefs.current.services = el; }}>
                 {[
                   { bsT: 'Landing Stranica', enT: 'Landing Page', bsD: 'Čista, profesionalna stranica koja ostavlja pravi utisak.', enD: 'A clean, professional page that makes the right impression.', feats: [{ bs: 'Custom dizajn, 1 stranica', en: '1-page custom design' }, { bs: 'Prilagođeno za mobitel', en: 'Mobile-responsive' }, { bs: 'Isporučeno za 5–7 dana', en: 'Delivered in 5–7 days' }] },
@@ -394,7 +400,7 @@ export default function Home() {
             </div>
           </div>
           <div className="carousel-wrap" id="pricingCarousel">
-            <div className="carousel-track-outer">
+            <div className="carousel-track-outer" onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }} onTouchEnd={(e) => handleCarouselSwipe('pricing', e)}>
               <div className="carousel-track" id="pricingTrack" ref={(el) => { trackRefs.current.pricing = el; }}>
                 {[
                   { period: { bs: 'Jednokratno · Fiksna cijena', en: 'One-time · Fixed price' }, feats: [{ bs: 'Custom dizajn, 1 stranica', en: '1-page custom design' }, { bs: 'Isporučeno za 5–7 dana', en: 'Delivered in 5–7 days' }, { bs: '14 dana podrške', en: '14 days support' }], cta: { bs: 'Počnimo', en: 'Get Started' }, featured: false },
@@ -544,7 +550,7 @@ export default function Home() {
             ))}
           </div>
           <div className="carousel-wrap" id="testimonialsCarousel">
-            <div className="carousel-track-outer">
+            <div className="carousel-track-outer" onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }} onTouchEnd={(e) => handleCarouselSwipe('testimonials', e)}>
               <div className="carousel-track" id="testimonialsTrack" ref={(el) => { trackRefs.current.testimonials = el; }}>
                 {[
                   { bsQ: 'Webora je isporučila nešto prekrasno za manje od dvije sedmice — i unutar budžeta. Telefon nije stao zvoniti od tada.', enQ: 'Webora delivered something beautiful in less than two weeks — within budget. Our phone has not stopped ringing since.', name: 'Amira Hadžić', role: 'Salon Azura · Sarajevo', initial: 'A' },
