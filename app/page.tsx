@@ -19,6 +19,18 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => { if (e.key === 'Escape') setMobileMenuOpen(false); };
+    if (mobileMenuOpen) {
+      document.addEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'hidden';
+    }
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
+
+  useEffect(() => {
     const reveals = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver(
       (entries) => {
@@ -41,10 +53,10 @@ export default function Home() {
 
   return (
     <>
-      <nav id="navbar" className={scrolled ? 'scrolled' : ''}>
+      <nav id="navbar" className={scrolled ? 'scrolled' : ''} aria-label="Main">
         <div className="nav-inner">
           <a href="#hero" className="nav-logo">
-            <svg className="nav-logo-icon" viewBox="0 0 28 28" fill="none">
+            <svg className="nav-logo-icon" viewBox="0 0 28 28" fill="none" aria-hidden>
               <circle cx="14" cy="14" r="11.5" stroke="#C8A84B" strokeWidth="1" />
               <circle cx="14" cy="14" r="6.5" stroke="#C8A84B" strokeWidth="1" strokeDasharray="2.5 2.5" />
               <path d="M8 14 L11.5 9.5 L14 14 L16.5 9.5 L20 14" stroke="#C8A84B" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
@@ -58,12 +70,13 @@ export default function Home() {
             <li><a href="#faq" onClick={() => setMobileMenuOpen(false)}>FAQ</a></li>
           </ul>
           <a href="#cta" className={`nav-cta ${mobileMenuOpen ? 'mobile-open' : ''}`} onClick={() => setMobileMenuOpen(false)}>Start a Project</a>
-          <div className="nav-hamburger" onClick={() => setMobileMenuOpen((o) => !o)} aria-label="Menu">
+          <button type="button" className={`nav-hamburger ${mobileMenuOpen ? 'active' : ''}`} onClick={() => setMobileMenuOpen((o) => !o)} aria-label="Toggle menu" aria-expanded={mobileMenuOpen}>
             <span /><span /><span />
-          </div>
+          </button>
         </div>
       </nav>
 
+      <main id="main-content">
       <section id="hero">
         <div className="hero-glow" />
         <div className="hero-glow-2" />
@@ -406,10 +419,17 @@ export default function Home() {
                 { q: 'Do you work with businesses outside Sarajevo?', a: "Absolutely. While we're rooted in Sarajevo, we work remotely with clients across Bosnia and Herzegovina, the wider region, and internationally. Our entire process works perfectly via email and video calls — distance has never been a problem." },
                 { q: 'What platform do you build on?', a: "It depends on your needs. For most business websites, we use modern, fast CMS platforms. For custom platforms, we build on reliable, scalable web technologies. We always recommend the best fit for your specific situation — not just what's easiest for us." },
               ].map((faq, i) => (
-                <div key={i} className={`faq-item ${openFaq === i ? 'open' : ''}`} onClick={() => toggleFaq(i)}>
-                  <div className="faq-question">
+                <div key={i} className={`faq-item ${openFaq === i ? 'open' : ''}`}>
+                  <div
+                    className="faq-question"
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => toggleFaq(i)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleFaq(i); } }}
+                    aria-expanded={openFaq === i}
+                  >
                     {faq.q}
-                    <svg className="faq-chevron" viewBox="0 0 24 24" fill="none"><polyline points="6 9 12 15 18 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+                    <svg className="faq-chevron" viewBox="0 0 24 24" fill="none" aria-hidden><polyline points="6 9 12 15 18 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
                   </div>
                   <div className="faq-answer">{faq.a}</div>
                 </div>
@@ -457,14 +477,14 @@ export default function Home() {
               <div className="footer-brand-logo"><em>Web</em>ora</div>
               <p className="footer-brand-desc">Professional web solutions for small and medium businesses in Sarajevo and beyond. Built with care. Delivered with precision.</p>
               <div className="footer-social">
-                <a href="#" className="social-link" title="Instagram">
-                  <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" /><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" /><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" /></svg>
+                <a href="#" className="social-link" title="Instagram" aria-label="Instagram">
+                  <svg viewBox="0 0 24 24" aria-hidden><rect x="2" y="2" width="20" height="20" rx="5" ry="5" /><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" /><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" /></svg>
                 </a>
-                <a href="#" className="social-link" title="LinkedIn">
-                  <svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z" /><rect x="2" y="9" width="4" height="12" /><circle cx="4" cy="4" r="2" /></svg>
+                <a href="#" className="social-link" title="LinkedIn" aria-label="LinkedIn">
+                  <svg viewBox="0 0 24 24" aria-hidden><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z" /><rect x="2" y="9" width="4" height="12" /><circle cx="4" cy="4" r="2" /></svg>
                 </a>
-                <a href="#" className="social-link" title="Facebook">
-                  <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" /></svg>
+                <a href="#" className="social-link" title="Facebook" aria-label="Facebook">
+                  <svg viewBox="0 0 24 24" aria-hidden><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" /></svg>
                 </a>
               </div>
             </div>
@@ -502,6 +522,7 @@ export default function Home() {
           </div>
         </div>
       </footer>
+      </main>
     </>
   );
 }
